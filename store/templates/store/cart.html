@@ -1,0 +1,273 @@
+{% extends 'store/base.html' %}
+
+{% block title %}Shopping Cart - Fashion Store Rwanda{% endblock %}
+
+{% block extra_css %}
+<style>
+    .cart-page {
+        display: grid;
+        grid-template-columns: 2fr 1fr;
+        gap: 2rem;
+        margin: 2rem 0;
+    }
+
+    .cart-items {
+        background: var(--white);
+        padding: 2rem;
+        border-radius: 8px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .cart-title {
+        font-size: 2em;
+        margin-bottom: 2rem;
+        color: var(--primary);
+    }
+
+    .cart-item {
+        display: grid;
+        grid-template-columns: 100px 1fr 150px 150px 50px;
+        gap: 1.5rem;
+        padding: 1.5rem 0;
+        border-bottom: 1px solid var(--border);
+        align-items: center;
+    }
+
+    .item-image {
+        width: 100px;
+        height: 100px;
+        background: linear-gradient(135deg, var(--primary), var(--secondary));
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 2.5em;
+    }
+
+    .item-details h3 {
+        color: var(--primary);
+        margin-bottom: 0.5rem;
+    }
+
+    .item-category {
+        color: #999;
+        font-size: 0.9em;
+        margin-bottom: 0.5rem;
+    }
+
+    .item-price {
+        color: var(--secondary);
+        font-weight: bold;
+    }
+
+    .quantity-controls {
+        display: flex;
+        border: 1px solid var(--border);
+        border-radius: 4px;
+        width: fit-content;
+    }
+
+    .quantity-controls button {
+        background: var(--light);
+        border: none;
+        padding: 0.5rem 0.8rem;
+        cursor: pointer;
+        font-weight: bold;
+    }
+
+    .quantity-controls input {
+        width: 50px;
+        border: none;
+        text-align: center;
+        font-weight: bold;
+    }
+
+    .item-total {
+        text-align: right;
+        font-weight: bold;
+        color: var(--primary);
+        font-size: 1.1em;
+    }
+
+    .remove-btn {
+        background: #dc3545;
+        color: white;
+        border: none;
+        padding: 0.5rem 1rem;
+        border-radius: 4px;
+        cursor: pointer;
+        font-weight: bold;
+        transition: background 0.3s;
+    }
+
+    .remove-btn:hover {
+        background: #c82333;
+    }
+
+    .empty-cart {
+        text-align: center;
+        padding: 3rem;
+        color: #999;
+    }
+
+    .empty-cart a {
+        color: var(--secondary);
+        text-decoration: none;
+        margin-top: 1rem;
+        display: inline-block;
+    }
+
+    /* Cart Summary */
+    .cart-summary {
+        background: var(--white);
+        padding: 2rem;
+        border-radius: 8px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        height: fit-content;
+    }
+
+    .summary-title {
+        font-size: 1.5em;
+        margin-bottom: 1.5rem;
+        color: var(--primary);
+    }
+
+    .summary-row {
+        display: flex;
+        justify-content: space-between;
+        padding: 0.8rem 0;
+        border-bottom: 1px solid var(--border);
+    }
+
+    .summary-row.total {
+        border: none;
+        padding-top: 1rem;
+        font-size: 1.3em;
+        font-weight: bold;
+        color: var(--secondary);
+    }
+
+    .checkout-btn {
+        width: 100%;
+        background-color: var(--secondary);
+        color: var(--primary);
+        border: none;
+        padding: 1rem;
+        border-radius: 4px;
+        font-weight: bold;
+        font-size: 1.1em;
+        cursor: pointer;
+        margin-top: 1.5rem;
+        transition: all 0.3s;
+    }
+
+    .checkout-btn:hover {
+        background-color: #e8c547;
+        transform: scale(1.02);
+    }
+
+    .continue-shopping {
+        width: 100%;
+        background-color: var(--primary);
+        color: white;
+        border: 2px solid var(--secondary);
+        padding: 1rem;
+        border-radius: 4px;
+        font-weight: bold;
+        text-decoration: none;
+        text-align: center;
+        display: block;
+        margin-top: 1rem;
+        transition: all 0.3s;
+    }
+
+    .continue-shopping:hover {
+        background-color: var(--secondary);
+        color: var(--primary);
+    }
+
+    @media (max-width: 768px) {
+        .cart-page {
+            grid-template-columns: 1fr;
+        }
+
+        .cart-item {
+            grid-template-columns: 80px 1fr;
+            gap: 1rem;
+        }
+
+        .quantity-controls,
+        .item-total,
+        .remove-btn {
+            grid-column: 2;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    {% if cart and cart.items.all %}
+    <div class="cart-page">
+        <!-- Cart Items -->
+        <div class="cart-items">
+            <h1 class="cart-title">Shopping Cart ({{ cart.total_items }} items)</h1>
+            
+            {% for item in cart.items.all %}
+            <div class="cart-item">
+                <div class="item-image">👗</div>
+                <div class="item-details">
+                    <h3>{{ item.product.name }}</h3>
+                    <div class="item-category">{{ item.product.category.name }}</div>
+                    <div class="item-price">${{ item.product.discounted_price }}</div>
+                </div>
+                <form method="post" action="{% url 'update_cart_item' item.id %}" class="quantity-controls">
+                    {% csrf_token %}
+                    <button type="button" onclick="this.parentForm.quantity.value--; this.parentForm.submit();">-</button>
+                    <input type="number" name="quantity" value="{{ item.quantity }}" min="1">
+                    <button type="button" onclick="this.parentForm.quantity.value++; this.parentForm.submit();">+</button>
+                </form>
+                <div class="item-total">${{ item.subtotal }}</div>
+                <form method="post" action="{% url 'remove_from_cart' item.id %}">
+                    {% csrf_token %}
+                    <button type="submit" class="remove-btn">🗑️</button>
+                </form>
+            </div>
+            {% endfor %}
+        </div>
+
+        <!-- Cart Summary -->
+        <div class="cart-summary">
+            <h2 class="summary-title">Order Summary</h2>
+            <div class="summary-row">
+                <span>Subtotal</span>
+                <span>${{ cart.total_price }}</span>
+            </div>
+            <div class="summary-row">
+                <span>Shipping</span>
+                <span>FREE</span>
+            </div>
+            <div class="summary-row">
+                <span>Tax</span>
+                <span>-</span>
+            </div>
+            <div class="summary-row total">
+                <span>Total</span>
+                <span>${{ cart.total_price }}</span>
+            </div>
+            
+            <a href="{% url 'checkout' %}" class="checkout-btn">Proceed to Checkout</a>
+            <a href="{% url 'products' %}" class="continue-shopping">Continue Shopping</a>
+        </div>
+    </div>
+    {% else %}
+    <div class="cart-items">
+        <div class="empty-cart">
+            <h2>Your Cart is Empty</h2>
+            <p>Add some products to get started!</p>
+            <a href="{% url 'products' %}" class="continue-shopping">🛍️ Start Shopping</a>
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

@@ -1,0 +1,322 @@
+{% extends 'store/base.html' %}
+
+{% block title %}Products - Fashion Store Rwanda{% endblock %}
+
+{% block extra_css %}
+<style>
+    .products-page {
+        display: grid;
+        grid-template-columns: 250px 1fr;
+        gap: 2rem;
+        margin: 2rem 0;
+    }
+
+    .sidebar {
+        background: var(--white);
+        padding: 1.5rem;
+        border-radius: 8px;
+        height: fit-content;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .filter-section {
+        margin-bottom: 2rem;
+    }
+
+    .filter-section h3 {
+        color: var(--primary);
+        margin-bottom: 1rem;
+        font-size: 1.1em;
+        border-bottom: 2px solid var(--secondary);
+        padding-bottom: 0.5rem;
+    }
+
+    .filter-section label {
+        display: block;
+        margin-bottom: 0.5rem;
+        cursor: pointer;
+    }
+
+    .filter-section input[type="checkbox"],
+    .filter-section input[type="number"] {
+        margin-right: 0.5rem;
+    }
+
+    .search-box {
+        margin-bottom: 1.5rem;
+    }
+
+    .search-box input {
+        width: 100%;
+        padding: 0.8rem;
+        border: 1px solid var(--border);
+        border-radius: 4px;
+        font-size: 1em;
+    }
+
+    .main-content {
+        background: var(--white);
+        padding: 1.5rem;
+        border-radius: 8px;
+    }
+
+    .products-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 2rem;
+    }
+
+    .products-header h1 {
+        color: var(--primary);
+        font-size: 2em;
+    }
+
+    .sort-select {
+        padding: 0.5rem 1rem;
+        border: 1px solid var(--border);
+        border-radius: 4px;
+    }
+
+    .products-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+        gap: 1.5rem;
+    }
+
+    .product-card {
+        background: var(--white);
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        overflow: hidden;
+        transition: all 0.3s;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .product-card:hover {
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+        transform: translateY(-5px);
+    }
+
+    .product-image {
+        width: 100%;
+        height: 200px;
+        background: linear-gradient(135deg, var(--primary), var(--secondary));
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 4em;
+        position: relative;
+    }
+
+    .product-badge {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        background-color: var(--secondary);
+        color: var(--primary);
+        padding: 0.5rem 1rem;
+        border-radius: 4px;
+        font-weight: bold;
+        font-size: 0.9em;
+    }
+
+    .product-info {
+        padding: 1rem;
+    }
+
+    .product-name {
+        font-size: 1.1em;
+        font-weight: bold;
+        color: var(--primary);
+        margin-bottom: 0.5rem;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .product-category {
+        color: #999;
+        font-size: 0.9em;
+        margin-bottom: 0.5rem;
+    }
+
+    .product-price {
+        font-size: 1.3em;
+        color: var(--secondary);
+        font-weight: bold;
+        margin-bottom: 1rem;
+    }
+
+    .product-stock {
+        font-size: 0.9em;
+        margin-bottom: 0.5rem;
+    }
+
+    .in-stock {
+        color: #28a745;
+    }
+
+    .out-of-stock {
+        color: #dc3545;
+    }
+
+    .action-buttons {
+        display: flex;
+        gap: 0.5rem;
+    }
+
+    .btn {
+        flex: 1;
+        padding: 0.7rem;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        font-weight: bold;
+        transition: all 0.3s;
+        text-decoration: none;
+        text-align: center;
+    }
+
+    .btn-primary {
+        background-color: var(--primary);
+        color: var(--white);
+    }
+
+    .btn-primary:hover {
+        background-color: var(--secondary);
+        color: var(--primary);
+    }
+
+    .btn-secondary {
+        background-color: var(--secondary);
+        color: var(--primary);
+    }
+
+    .btn-secondary:hover {
+        background-color: #e8c547;
+    }
+
+    .no-products {
+        text-align: center;
+        padding: 3rem;
+        color: #999;
+    }
+
+    @media (max-width: 768px) {
+        .products-page {
+            grid-template-columns: 1fr;
+        }
+
+        .sidebar {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            height: auto;
+        }
+
+        .products-grid {
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="products-page">
+        <!-- Sidebar Filters -->
+        <aside class="sidebar">
+            <!-- Search -->
+            <div class="search-box">
+                <form method="get">
+                    <input type="text" name="search" placeholder="Search products..." value="{{ search }}">
+                </form>
+            </div>
+
+            <!-- Category Filter -->
+            <div class="filter-section">
+                <h3>Categories</h3>
+                <form method="get">
+                    {% for category in categories %}
+                    <label>
+                        <input type="radio" name="category" value="{{ category.id }}" 
+                            {% if selected_category == category.id|stringformat:"s" %}checked{% endif %}>
+                        {{ category.name }}
+                    </label>
+                    {% endfor %}
+                    <label>
+                        <input type="radio" name="category" value="">
+                        All Categories
+                    </label>
+                </form>
+            </div>
+
+            <!-- Price Filter -->
+            <div class="filter-section">
+                <h3>Price Range</h3>
+                <form method="get">
+                    <label>Min: <input type="number" name="min_price" placeholder="Min" step="0.01"></label>
+                    <label>Max: <input type="number" name="max_price" placeholder="Max" step="0.01"></label>
+                </form>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <div class="products-header">
+                <h1>Our Products</h1>
+                <select class="sort-select">
+                    <option>Sort by</option>
+                    <option>Newest</option>
+                    <option>Price: Low to High</option>
+                    <option>Price: High to Low</option>
+                </select>
+            </div>
+
+            {% if products %}
+            <div class="products-grid">
+                {% for product in products %}
+                <div class="product-card">
+                    <div class="product-image">
+                        {% if product.badge != 'none' %}
+                            <span class="product-badge">
+                                {% if product.badge == 'new' %}New
+                                {% elif product.badge == 'bestseller' %}Best Seller
+                                {% elif product.badge == 'sale' %}Sale
+                                {% endif %}
+                            </span>
+                        {% endif %}
+                        👗
+                    </div>
+                    <div class="product-info">
+                        <div class="product-name">{{ product.name }}</div>
+                        <div class="product-category">{{ product.category.name }}</div>
+                        <div class="product-price">${{ product.discounted_price }}</div>
+                        <div class="product-stock {% if product.is_in_stock %}in-stock{% else %}out-of-stock{% endif %}">
+                            {% if product.is_in_stock %}✓ In Stock{% else %}Out of Stock{% endif %}
+                        </div>
+                        <div class="action-buttons">
+                            <a href="{% url 'product_detail' product.id %}" class="btn btn-secondary">View</a>
+                            {% if product.is_in_stock %}
+                            <form method="post" action="{% url 'add_to_cart' product.id %}" style="flex: 1;">
+                                {% csrf_token %}
+                                <input type="hidden" name="quantity" value="1">
+                                <button type="submit" class="btn btn-primary" style="width: 100%;">Add</button>
+                            </form>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <div class="no-products">
+                <h2>No products found</h2>
+                <p>Try adjusting your filters</p>
+            </div>
+            {% endif %}
+        </main>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,353 @@
+{% extends 'store/base.html' %}
+
+{% block title %}My Profile - Fashion Store Rwanda{% endblock %}
+
+{% block extra_css %}
+<style>
+    .profile-page {
+        display: grid;
+        grid-template-columns: 300px 1fr;
+        gap: 2rem;
+        margin: 2rem 0;
+    }
+
+    .profile-sidebar {
+        background: var(--white);
+        padding: 2rem;
+        border-radius: 8px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        height: fit-content;
+    }
+
+    .profile-avatar {
+        width: 120px;
+        height: 120px;
+        background: linear-gradient(135deg, var(--primary), var(--secondary));
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 4em;
+        margin: 0 auto 1rem;
+    }
+
+    .profile-name {
+        text-align: center;
+        font-size: 1.3em;
+        font-weight: bold;
+        color: var(--primary);
+        margin-bottom: 0.5rem;
+    }
+
+    .profile-email {
+        text-align: center;
+        color: #999;
+        margin-bottom: 1.5rem;
+    }
+
+    .profile-menu {
+        list-style: none;
+    }
+
+    .profile-menu-item {
+        padding: 0.8rem 1rem;
+        margin-bottom: 0.5rem;
+        border-radius: 4px;
+        cursor: pointer;
+        transition: all 0.3s;
+    }
+
+    .profile-menu-item.active {
+        background: var(--secondary);
+        color: var(--primary);
+        font-weight: bold;
+    }
+
+    .profile-menu-item:hover {
+        background: var(--light);
+    }
+
+    .logout-btn {
+        width: 100%;
+        background: #dc3545;
+        color: white;
+        border: none;
+        padding: 0.8rem;
+        border-radius: 4px;
+        cursor: pointer;
+        font-weight: bold;
+        margin-top: 1rem;
+        transition: all 0.3s;
+    }
+
+    .logout-btn:hover {
+        background: #c82333;
+    }
+
+    .profile-content {
+        background: var(--white);
+        padding: 2rem;
+        border-radius: 8px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .content-title {
+        font-size: 1.8em;
+        color: var(--primary);
+        margin-bottom: 1.5rem;
+        padding-bottom: 1rem;
+        border-bottom: 2px solid var(--secondary);
+    }
+
+    .info-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1.5rem;
+        margin-bottom: 2rem;
+    }
+
+    .info-item {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .info-label {
+        font-weight: bold;
+        color: var(--primary);
+        margin-bottom: 0.3rem;
+    }
+
+    .info-value {
+        color: #666;
+    }
+
+    .orders-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 1rem;
+    }
+
+    table thead {
+        background: var(--light);
+    }
+
+    table th {
+        padding: 1rem;
+        text-align: left;
+        font-weight: bold;
+        color: var(--primary);
+        border-bottom: 2px solid var(--border);
+    }
+
+    table td {
+        padding: 1rem;
+        border-bottom: 1px solid var(--border);
+    }
+
+    table tbody tr:hover {
+        background: var(--light);
+    }
+
+    .status-badge {
+        padding: 0.3rem 0.8rem;
+        border-radius: 4px;
+        font-weight: bold;
+        font-size: 0.9em;
+    }
+
+    .status-pending {
+        background: #fff3cd;
+        color: #856404;
+    }
+
+    .status-delivered {
+        background: #d1e7dd;
+        color: #0f5132;
+    }
+
+    .view-btn {
+        background: var(--secondary);
+        color: var(--primary);
+        border: none;
+        padding: 0.4rem 0.8rem;
+        border-radius: 4px;
+        cursor: pointer;
+        font-weight: bold;
+        transition: all 0.3s;
+    }
+
+    .view-btn:hover {
+        background: #e8c547;
+    }
+
+    .empty-state {
+        text-align: center;
+        padding: 2rem;
+        color: #999;
+    }
+
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+        gap: 1rem;
+        margin-bottom: 2rem;
+    }
+
+    .stat-card {
+        background: linear-gradient(135deg, var(--primary), var(--secondary));
+        color: white;
+        padding: 1.5rem;
+        border-radius: 8px;
+        text-align: center;
+    }
+
+    .stat-number {
+        font-size: 2em;
+        font-weight: bold;
+        margin-bottom: 0.5rem;
+    }
+
+    .stat-label {
+        font-size: 0.9em;
+        opacity: 0.9;
+    }
+
+    @media (max-width: 768px) {
+        .profile-page {
+            grid-template-columns: 1fr;
+        }
+
+        .profile-sidebar {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+
+        .info-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .orders-table {
+            font-size: 0.9em;
+        }
+
+        table th, table td {
+            padding: 0.7rem;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="profile-page">
+        <!-- Sidebar -->
+        <aside class="profile-sidebar">
+            <div class="profile-avatar">👤</div>
+            <div class="profile-name">{{ user.username }}</div>
+            <div class="profile-email">{{ user.email }}</div>
+            
+            <ul class="profile-menu">
+                <li class="profile-menu-item active">📊 My Profile</li>
+                <li class="profile-menu-item">❤️ Wishlist</li>
+                <li class="profile-menu-item">⚙️ Settings</li>
+                <li class="profile-menu-item">📞 Help & Support</li>
+            </ul>
+
+            <form method="post" action="{% url 'logout' %}" style="display: flex;">
+                {% csrf_token %}
+                <button type="submit" class="logout-btn">Logout</button>
+            </form>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="profile-content">
+            <h1 class="content-title">👤 My Profile</h1>
+
+            <!-- Stats -->
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-number">{{ orders.count }}</div>
+                    <div class="stat-label">Total Orders</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">{{ orders|dictsort:"status"|length }}</div>
+                    <div class="stat-label">Active Orders</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">${% widthratio orders|dictsort:"total_amount" 1 1 %}</div>
+                    <div class="stat-label">Total Spent</div>
+                </div>
+            </div>
+
+            <!-- Account Information -->
+            <div style="margin-bottom: 2rem;">
+                <h2 class="content-title">Account Information</h2>
+                <div class="info-grid">
+                    <div class="info-item">
+                        <span class="info-label">Username</span>
+                        <span class="info-value">{{ user.username }}</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Email</span>
+                        <span class="info-value">{{ user.email }}</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Member Since</span>
+                        <span class="info-value">{{ user.date_joined|date:"M d, Y" }}</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Account Status</span>
+                        <span class="info-value" style="color: #28a745; font-weight: bold;">✓ Active</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Recent Orders -->
+            <div>
+                <h2 class="content-title">Recent Orders</h2>
+                {% if orders %}
+                <table class="orders-table">
+                    <thead>
+                        <tr>
+                            <th>Order #</th>
+                            <th>Date</th>
+                            <th>Total</th>
+                            <th>Status</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for order in orders|slice:":5" %}
+                        <tr>
+                            <td><strong>#{{ order.id }}</strong></td>
+                            <td>{{ order.created_at|date:"M d, Y" }}</td>
+                            <td><strong>${{ order.total_amount }}</strong></td>
+                            <td>
+                                <span class="status-badge status-{{ order.status }}">
+                                    {{ order.get_status_display }}
+                                </span>
+                            </td>
+                            <td>
+                                <a href="{% url 'order_detail' order.id %}">
+                                    <button class="view-btn">View</button>
+                                </a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+                <div style="text-align: center; margin-top: 1.5rem;">
+                    <a href="{% url 'order_history' %}" style="color: var(--secondary); text-decoration: none; font-weight: bold;">View All Orders →</a>
+                </div>
+                {% else %}
+                <div class="empty-state">
+                    <p>You don't have any orders yet.</p>
+                    <a href="{% url 'products' %}" style="color: var(--secondary); text-decoration: none; margin-top: 1rem; display: inline-block;">Start Shopping</a>
+                </div>
+                {% endif %}
+            </div>
+        </main>
+    </div>
+</div>
+{% endblock %}

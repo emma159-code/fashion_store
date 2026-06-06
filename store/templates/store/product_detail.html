@@ -1,0 +1,489 @@
+{% extends 'store/base.html' %}
+
+{% block title %}{{ product.name }} - Fashion Store Rwanda{% endblock %}
+
+{% block extra_css %}
+<style>
+    .product-detail-page {
+        background: var(--white);
+        padding: 2rem;
+        border-radius: 8px;
+        margin: 2rem 0;
+    }
+
+    .breadcrumb {
+        margin-bottom: 2rem;
+        color: #999;
+    }
+
+    .breadcrumb a {
+        color: var(--secondary);
+        text-decoration: none;
+        margin: 0 0.5rem;
+    }
+
+    .product-detail {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 2rem;
+        margin-bottom: 3rem;
+    }
+
+    .product-gallery {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+    }
+
+    .main-image {
+        width: 100%;
+        height: 400px;
+        background: linear-gradient(135deg, var(--primary), var(--secondary));
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 8em;
+        margin-bottom: 1rem;
+        position: relative;
+    }
+
+    .product-badge {
+        position: absolute;
+        top: 20px;
+        right: 20px;
+        background-color: var(--secondary);
+        color: var(--primary);
+        padding: 0.8rem 1.5rem;
+        border-radius: 4px;
+        font-weight: bold;
+        font-size: 1em;
+    }
+
+    .thumbnail-gallery {
+        display: flex;
+        gap: 0.5rem;
+    }
+
+    .thumbnail {
+        width: 80px;
+        height: 80px;
+        background: linear-gradient(135deg, #444, #666);
+        border-radius: 4px;
+        cursor: pointer;
+        border: 2px solid transparent;
+        transition: all 0.3s;
+    }
+
+    .thumbnail:hover {
+        border-color: var(--secondary);
+    }
+
+    .product-details {
+        padding: 1rem;
+    }
+
+    .product-title {
+        font-size: 2.5em;
+        color: var(--primary);
+        margin-bottom: 1rem;
+    }
+
+    .product-rating {
+        color: #ff9800;
+        margin-bottom: 1rem;
+    }
+
+    .product-price-section {
+        border-bottom: 2px solid var(--secondary);
+        padding-bottom: 1.5rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .price-display {
+        font-size: 2em;
+        color: var(--secondary);
+        font-weight: bold;
+        margin-bottom: 0.5rem;
+    }
+
+    .original-price {
+        text-decoration: line-through;
+        color: #999;
+        font-size: 1.3em;
+        margin-right: 0.5rem;
+    }
+
+    .discount-badge {
+        background-color: #dc3545;
+        color: white;
+        padding: 0.3rem 0.8rem;
+        border-radius: 4px;
+        font-weight: bold;
+    }
+
+    .stock-status {
+        font-size: 1.1em;
+        margin-bottom: 1rem;
+    }
+
+    .stock-status.in-stock {
+        color: #28a745;
+    }
+
+    .stock-status.out-of-stock {
+        color: #dc3545;
+    }
+
+    .quantity-selector {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .quantity-selector label {
+        font-weight: bold;
+    }
+
+    .quantity-input {
+        display: flex;
+        border: 1px solid var(--border);
+        border-radius: 4px;
+        width: fit-content;
+    }
+
+    .quantity-input button {
+        background: var(--light);
+        border: none;
+        padding: 0.5rem 1rem;
+        cursor: pointer;
+        font-weight: bold;
+    }
+
+    .quantity-input input {
+        width: 50px;
+        border: none;
+        text-align: center;
+        font-weight: bold;
+    }
+
+    .action-buttons {
+        display: flex;
+        gap: 1rem;
+        margin-bottom: 2rem;
+    }
+
+    .btn {
+        flex: 1;
+        padding: 1rem;
+        border: none;
+        border-radius: 4px;
+        font-weight: bold;
+        font-size: 1em;
+        cursor: pointer;
+        transition: all 0.3s;
+        text-decoration: none;
+        text-align: center;
+    }
+
+    .btn-add-cart {
+        background-color: var(--secondary);
+        color: var(--primary);
+    }
+
+    .btn-add-cart:hover {
+        background-color: #e8c547;
+    }
+
+    .btn-wishlist {
+        background-color: var(--primary);
+        color: white;
+        border: 2px solid var(--secondary);
+    }
+
+    .btn-wishlist:hover {
+        background-color: var(--secondary);
+        color: var(--primary);
+    }
+
+    .product-tabs {
+        border-bottom: 2px solid var(--border);
+        margin-bottom: 2rem;
+    }
+
+    .tabs {
+        display: flex;
+        gap: 2rem;
+        margin-bottom: 1rem;
+    }
+
+    .tab {
+        padding: 0.8rem 0;
+        cursor: pointer;
+        font-weight: bold;
+        color: #999;
+        border-bottom: 3px solid transparent;
+        transition: all 0.3s;
+    }
+
+    .tab.active {
+        color: var(--secondary);
+        border-bottom-color: var(--secondary);
+    }
+
+    .tab-content {
+        display: none;
+    }
+
+    .tab-content.active {
+        display: block;
+    }
+
+    .description {
+        color: #666;
+        line-height: 1.8;
+        margin-bottom: 1rem;
+    }
+
+    .related-products {
+        margin-top: 3rem;
+        padding-top: 3rem;
+        border-top: 2px solid var(--border);
+    }
+
+    .related-title {
+        font-size: 2em;
+        margin-bottom: 2rem;
+        color: var(--primary);
+    }
+
+    .related-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+        gap: 1.5rem;
+    }
+
+    .related-card {
+        background: var(--light);
+        border-radius: 8px;
+        overflow: hidden;
+        transition: all 0.3s;
+    }
+
+    .related-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+    }
+
+    .related-image {
+        width: 100%;
+        height: 200px;
+        background: linear-gradient(135deg, var(--primary), var(--secondary));
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 3em;
+    }
+
+    .related-info {
+        padding: 1rem;
+    }
+
+    .related-name {
+        font-weight: bold;
+        margin-bottom: 0.5rem;
+        color: var(--primary);
+    }
+
+    .related-price {
+        color: var(--secondary);
+        font-weight: bold;
+    }
+
+    @media (max-width: 768px) {
+        .product-detail {
+            grid-template-columns: 1fr;
+        }
+
+        .product-title {
+            font-size: 1.8em;
+        }
+
+        .action-buttons {
+            flex-direction: column;
+        }
+
+        .tabs {
+            gap: 1rem;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <!-- Breadcrumb -->
+    <div class="breadcrumb">
+        <a href="{% url 'home' %}">Home</a> /
+        <a href="{% url 'products' %}">Products</a> /
+        <span>{{ product.name }}</span>
+    </div>
+
+    <!-- Product Detail -->
+    <div class="product-detail-page">
+        <div class="product-detail">
+            <!-- Product Gallery -->
+            <div class="product-gallery">
+                <div class="main-image">
+                    {% if product.badge != 'none' %}
+                        <span class="product-badge">
+                            {% if product.badge == 'new' %}🆕 NEW
+                            {% elif product.badge == 'bestseller' %}⭐ BEST SELLER
+                            {% elif product.badge == 'sale' %}💰 SALE
+                            {% endif %}
+                        </span>
+                    {% endif %}
+                    👗
+                </div>
+                <div class="thumbnail-gallery">
+                    <div class="thumbnail"></div>
+                    <div class="thumbnail"></div>
+                    <div class="thumbnail"></div>
+                    <div class="thumbnail"></div>
+                </div>
+            </div>
+
+            <!-- Product Details -->
+            <div class="product-details">
+                <h1 class="product-title">{{ product.name }}</h1>
+                
+                <div class="product-rating">
+                    ⭐⭐⭐⭐⭐ (125 reviews)
+                </div>
+
+                <div class="product-price-section">
+                    <div class="price-display">
+                        {% if product.discount_percentage > 0 %}
+                            <span class="original-price">${{ product.price }}</span>
+                            ${{ product.discounted_price }}
+                            <span class="discount-badge">-{{ product.discount_percentage }}%</span>
+                        {% else %}
+                            ${{ product.price }}
+                        {% endif %}
+                    </div>
+                </div>
+
+                <div class="stock-status {% if product.is_in_stock %}in-stock{% else %}out-of-stock{% endif %}">
+                    {% if product.is_in_stock %}
+                        ✓ In Stock ({{ product.stock }} available)
+                    {% else %}
+                        ✗ Out of Stock
+                    {% endif %}
+                </div>
+
+                {% if product.is_in_stock %}
+                <form method="post" action="{% url 'add_to_cart' product.id %}">
+                    {% csrf_token %}
+                    <div class="quantity-selector">
+                        <label for="quantity">Quantity:</label>
+                        <div class="quantity-input">
+                            <button type="button" onclick="decreaseQuantity()">-</button>
+                            <input type="number" id="quantity" name="quantity" value="1" min="1" max="{{ product.stock }}">
+                            <button type="button" onclick="increaseQuantity()">+</button>
+                        </div>
+                    </div>
+
+                    <div class="action-buttons">
+                        <button type="submit" class="btn btn-add-cart">🛒 Add to Cart</button>
+                        <button type="button" class="btn btn-wishlist">❤️ Add to Wishlist</button>
+                    </div>
+                </form>
+                {% endif %}
+
+                <!-- Product Tabs -->
+                <div class="product-tabs">
+                    <div class="tabs">
+                        <div class="tab active" onclick="showTab('description')">Description</div>
+                        <div class="tab" onclick="showTab('specs')">Specifications</div>
+                        <div class="tab" onclick="showTab('shipping')">Shipping & Returns</div>
+                    </div>
+
+                    <div id="description" class="tab-content active">
+                        <div class="description">
+                            {{ product.description }}
+                        </div>
+                    </div>
+
+                    <div id="specs" class="tab-content">
+                        <div class="description">
+                            <ul>
+                                <li><strong>Category:</strong> {{ product.category.name }}</li>
+                                <li><strong>Material:</strong> Premium Fabric</li>
+                                <li><strong>Size:</strong> S, M, L, XL, XXL</li>
+                                <li><strong>Color:</strong> Available in multiple colors</li>
+                                <li><strong>Care:</strong> Machine wash, gentle cycle</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div id="shipping" class="tab-content">
+                        <div class="description">
+                            <p><strong>Shipping:</strong> Free shipping on orders over $50</p>
+                            <p><strong>Delivery Time:</strong> 3-5 business days</p>
+                            <p><strong>Returns:</strong> 30-day money-back guarantee</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Related Products -->
+        {% if related_products %}
+        <div class="related-products">
+            <h2 class="related-title">Related Products</h2>
+            <div class="related-grid">
+                {% for prod in related_products %}
+                <div class="related-card">
+                    <div class="related-image">👗</div>
+                    <div class="related-info">
+                        <div class="related-name">{{ prod.name }}</div>
+                        <div class="related-price">${{ prod.discounted_price }}</div>
+                        <a href="{% url 'product_detail' prod.id %}" style="color: var(--secondary); text-decoration: none;">View →</a>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+<script>
+    function showTab(tabName) {
+        const contents = document.querySelectorAll('.tab-content');
+        const tabs = document.querySelectorAll('.tab');
+        
+        contents.forEach(content => content.classList.remove('active'));
+        tabs.forEach(tab => tab.classList.remove('active'));
+        
+        document.getElementById(tabName).classList.add('active');
+        event.target.classList.add('active');
+    }
+
+    function decreaseQuantity() {
+        const input = document.getElementById('quantity');
+        if (parseInt(input.value) > 1) {
+            input.value = parseInt(input.value) - 1;
+        }
+    }
+
+    function increaseQuantity() {
+        const input = document.getElementById('quantity');
+        const max = parseInt(input.max);
+        if (parseInt(input.value) < max) {
+            input.value = parseInt(input.value) + 1;
+        }
+    }
+</script>
+{% endblock %}

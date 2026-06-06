@@ -1,0 +1,200 @@
+{% extends 'store/base.html' %}
+
+{% block title %}Order History - Fashion Store Rwanda{% endblock %}
+
+{% block extra_css %}
+<style>
+    .orders-page {
+        margin: 2rem 0;
+    }
+
+    .page-title {
+        font-size: 2em;
+        margin-bottom: 2rem;
+        color: var(--primary);
+    }
+
+    .orders-table {
+        background: var(--white);
+        border-radius: 8px;
+        overflow: hidden;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    thead {
+        background: var(--primary);
+        color: white;
+    }
+
+    th {
+        padding: 1rem;
+        text-align: left;
+        font-weight: bold;
+    }
+
+    td {
+        padding: 1rem;
+        border-bottom: 1px solid var(--border);
+    }
+
+    tbody tr:hover {
+        background: var(--light);
+    }
+
+    .order-id {
+        color: var(--secondary);
+        font-weight: bold;
+    }
+
+    .order-date {
+        color: #666;
+    }
+
+    .status-badge {
+        padding: 0.4rem 0.8rem;
+        border-radius: 4px;
+        font-size: 0.9em;
+        font-weight: bold;
+        text-align: center;
+        min-width: 100px;
+    }
+
+    .status-pending {
+        background: #fff3cd;
+        color: #856404;
+    }
+
+    .status-processing {
+        background: #d1ecf1;
+        color: #0c5460;
+    }
+
+    .status-shipped {
+        background: #cfe2ff;
+        color: #084298;
+    }
+
+    .status-delivered {
+        background: #d1e7dd;
+        color: #0f5132;
+    }
+
+    .status-cancelled {
+        background: #f8d7da;
+        color: #721c24;
+    }
+
+    .order-amount {
+        font-weight: bold;
+        color: var(--secondary);
+    }
+
+    .action-btn {
+        background: var(--secondary);
+        color: var(--primary);
+        border: none;
+        padding: 0.5rem 1rem;
+        border-radius: 4px;
+        cursor: pointer;
+        font-weight: bold;
+        transition: all 0.3s;
+        text-decoration: none;
+        display: inline-block;
+    }
+
+    .action-btn:hover {
+        background: #e8c547;
+    }
+
+    .empty-state {
+        text-align: center;
+        padding: 3rem;
+        color: #999;
+    }
+
+    .empty-state a {
+        color: var(--secondary);
+        text-decoration: none;
+        display: inline-block;
+        margin-top: 1rem;
+        padding: 0.8rem 1.5rem;
+        background: var(--primary);
+        color: white;
+        border-radius: 4px;
+        transition: all 0.3s;
+    }
+
+    .empty-state a:hover {
+        background: var(--secondary);
+        color: var(--primary);
+    }
+
+    @media (max-width: 768px) {
+        table {
+            font-size: 0.9em;
+        }
+
+        th, td {
+            padding: 0.7rem;
+        }
+
+        .status-badge {
+            min-width: 80px;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="orders-page">
+        <h1 class="page-title">📦 My Orders</h1>
+
+        {% if orders %}
+        <div class="orders-table">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Order #</th>
+                        <th>Date</th>
+                        <th>Total</th>
+                        <th>Status</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for order in orders %}
+                    <tr>
+                        <td><span class="order-id">#{{ order.id }}</span></td>
+                        <td><span class="order-date">{{ order.created_at|date:"M d, Y" }}</span></td>
+                        <td><span class="order-amount">${{ order.total_amount }}</span></td>
+                        <td>
+                            <span class="status-badge status-{{ order.status }}">
+                                {{ order.get_status_display }}
+                            </span>
+                        </td>
+                        <td>
+                            <a href="{% url 'order_detail' order.id %}" class="action-btn">View Details</a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <div class="orders-table">
+            <div class="empty-state">
+                <h2>No Orders Yet</h2>
+                <p>You haven't made any orders yet. Start shopping to create your first order!</p>
+                <a href="{% url 'products' %}">🛍️ Shop Now</a>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

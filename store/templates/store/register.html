@@ -1,0 +1,216 @@
+{% extends 'store/base.html' %}
+
+{% block title %}Register - Fashion Store Rwanda{% endblock %}
+
+{% block extra_css %}
+<style>
+    .auth-page {
+        min-height: calc(100vh - 300px);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 2rem;
+    }
+
+    .auth-container {
+        background: var(--white);
+        padding: 2rem;
+        border-radius: 8px;
+        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+        max-width: 400px;
+        width: 100%;
+    }
+
+    .auth-title {
+        font-size: 2em;
+        text-align: center;
+        margin-bottom: 0.5rem;
+        color: var(--primary);
+    }
+
+    .auth-subtitle {
+        text-align: center;
+        color: #999;
+        margin-bottom: 2rem;
+    }
+
+    .auth-form {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .form-group {
+        display: flex;
+        flex-direction: column;
+        margin-bottom: 1.5rem;
+    }
+
+    .form-group label {
+        font-weight: bold;
+        margin-bottom: 0.5rem;
+        color: var(--primary);
+    }
+
+    .form-group input {
+        padding: 0.8rem;
+        border: 1px solid var(--border);
+        border-radius: 4px;
+        font-size: 1em;
+        font-family: inherit;
+    }
+
+    .form-group input:focus {
+        outline: none;
+        border-color: var(--secondary);
+        box-shadow: 0 0 5px rgba(212, 175, 55, 0.3);
+    }
+
+    .password-strength {
+        font-size: 0.85em;
+        margin-top: 0.3rem;
+        padding: 0.5rem;
+        border-radius: 4px;
+        text-align: center;
+    }
+
+    .strength-weak {
+        background: #ffebee;
+        color: #c62828;
+    }
+
+    .strength-medium {
+        background: #fff3e0;
+        color: #e65100;
+    }
+
+    .strength-strong {
+        background: #e8f5e9;
+        color: #2e7d32;
+    }
+
+    .submit-btn {
+        background-color: var(--secondary);
+        color: var(--primary);
+        border: none;
+        padding: 0.8rem;
+        border-radius: 4px;
+        font-weight: bold;
+        font-size: 1em;
+        cursor: pointer;
+        transition: all 0.3s;
+        margin-top: 0.5rem;
+    }
+
+    .submit-btn:hover {
+        background-color: #e8c547;
+        transform: scale(1.02);
+    }
+
+    .auth-link {
+        text-align: center;
+        margin-top: 1.5rem;
+        color: #666;
+    }
+
+    .auth-link a {
+        color: var(--secondary);
+        text-decoration: none;
+        font-weight: bold;
+    }
+
+    .auth-link a:hover {
+        text-decoration: underline;
+    }
+
+    .terms {
+        font-size: 0.85em;
+        color: #666;
+        margin-bottom: 1rem;
+    }
+
+    .terms a {
+        color: var(--secondary);
+        text-decoration: none;
+    }
+
+    .checkbox-group {
+        display: flex;
+        align-items: flex-start;
+        margin-bottom: 1rem;
+    }
+
+    .checkbox-group input {
+        margin-right: 0.5rem;
+        margin-top: 0.3rem;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="auth-page">
+    <div class="auth-container">
+        <h1 class="auth-title">Create Account</h1>
+        <p class="auth-subtitle">Join Fashion Store Rwanda</p>
+
+        <form method="post" class="auth-form">
+            {% csrf_token %}
+            
+            <div class="form-group">
+                <label for="username">Username</label>
+                <input type="text" id="username" name="username" required autofocus>
+            </div>
+
+            <div class="form-group">
+                <label for="email">Email Address</label>
+                <input type="email" id="email" name="email" required>
+            </div>
+
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input type="password" id="password" name="password" required onchange="checkPasswordStrength()">
+                <div id="strength" class="password-strength"></div>
+            </div>
+
+            <div class="form-group">
+                <label for="password_confirm">Confirm Password</label>
+                <input type="password" id="password_confirm" name="password_confirm" required>
+            </div>
+
+            <div class="checkbox-group">
+                <input type="checkbox" id="terms" required>
+                <label for="terms" class="terms">
+                    I agree to the <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a>
+                </label>
+            </div>
+
+            <button type="submit" class="submit-btn">Create Account</button>
+
+            <div class="auth-link">
+                <p>Already have an account? <a href="{% url 'login' %}">Sign in</a></p>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    function checkPasswordStrength() {
+        const password = document.getElementById('password').value;
+        const strengthDiv = document.getElementById('strength');
+        let strength = 'Weak';
+        let className = 'strength-weak';
+
+        if (password.length >= 8) {
+            strength = 'Medium';
+            className = 'strength-medium';
+        }
+
+        if (password.length >= 12 && /[A-Z]/.test(password) && /[0-9]/.test(password)) {
+            strength = 'Strong';
+            className = 'strength-strong';
+        }
+
+        strengthDiv.textContent = 'Password strength: ' + strength;
+        strengthDiv.className = 'password-strength ' + className;
+    }
+</script>
+{% endblock %}

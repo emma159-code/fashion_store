@@ -1,0 +1,436 @@
+{% extends 'store/base.html' %}
+
+{% block title %}{{ category_name }} - Fashion Store Rwanda{% endblock %}
+
+{% block extra_css %}
+<style>
+    /* Hero Header */
+    .category-hero {
+        background: linear-gradient(135deg, #2a2a2a 0%, #1a1a1a 100%);
+        color: white;
+        padding: 3rem 0;
+        text-align: center;
+        border-bottom: 3px solid var(--secondary);
+        margin-bottom: 2rem;
+    }
+
+    .category-hero h1 {
+        font-size: 3em;
+        margin-bottom: 0.5rem;
+        font-weight: 300;
+        letter-spacing: 2px;
+    }
+
+    .category-hero .emoji {
+        font-size: 2.5em;
+        margin-right: 1rem;
+    }
+
+    .category-hero p {
+        font-size: 1.1em;
+        color: var(--secondary);
+        opacity: 0.9;
+    }
+
+    /* Main Layout */
+    .category-page {
+        display: grid;
+        grid-template-columns: 280px 1fr;
+        gap: 2rem;
+        margin: 2rem 0;
+    }
+
+    /* Sidebar Filters */
+    .sidebar {
+        background: white;
+        padding: 2rem 1.5rem;
+        border-radius: 0;
+        height: fit-content;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+        border-left: 4px solid var(--secondary);
+    }
+
+    .filter-title {
+        font-size: 1em;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 2px;
+        color: var(--primary);
+        margin-bottom: 1.5rem;
+        padding-bottom: 1rem;
+        border-bottom: 2px solid var(--border);
+    }
+
+    .filter-section {
+        margin-bottom: 1.5rem;
+    }
+
+    .filter-section h3 {
+        color: var(--primary);
+        margin-bottom: 1rem;
+        font-size: 0.95em;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
+
+    .filter-section label {
+        display: block;
+        margin-bottom: 0.7rem;
+        cursor: pointer;
+        font-size: 0.95em;
+        color: #666;
+        transition: color 0.3s;
+    }
+
+    .filter-section label:hover {
+        color: var(--secondary);
+    }
+
+    .filter-section input[type="checkbox"],
+    .filter-section input[type="number"] {
+        margin-right: 0.5rem;
+    }
+
+    .search-box {
+        margin-bottom: 1.5rem;
+    }
+
+    .search-box input {
+        width: 100%;
+        padding: 0.8rem;
+        border: 1px solid var(--border);
+        border-radius: 0;
+        font-size: 0.95em;
+        background: var(--light);
+    }
+
+    /* Main Content */
+    .main-content {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .content-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 2rem;
+        padding-bottom: 1rem;
+        border-bottom: 2px solid var(--border);
+    }
+
+    .content-header h2 {
+        color: var(--primary);
+        font-size: 1.3em;
+        font-weight: 600;
+        letter-spacing: 1px;
+    }
+
+    .products-count {
+        color: #999;
+        font-size: 0.95em;
+    }
+
+    .sort-select {
+        padding: 0.6rem 1rem;
+        border: 1px solid var(--border);
+        border-radius: 0;
+        background: white;
+        font-size: 0.95em;
+        cursor: pointer;
+        font-weight: 500;
+        color: var(--primary);
+    }
+
+    /* Products Grid */
+    .products-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 2rem;
+        margin-bottom: 3rem;
+    }
+
+    .product-card {
+        background: white;
+        border: none;
+        border-radius: 0;
+        overflow: hidden;
+        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+        position: relative;
+    }
+
+    .product-card:hover {
+        box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15);
+        transform: translateY(-8px);
+    }
+
+    .product-image {
+        width: 100%;
+        height: 350px;
+        background: linear-gradient(135deg, #f5f5f5 0%, #e8e8e8 100%);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 4em;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .product-image::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(212, 175, 55, 0);
+        opacity: 0;
+        transition: all 0.4s;
+        z-index: 1;
+    }
+
+    .product-card:hover .product-image::before {
+        background: rgba(212, 175, 55, 0.1);
+        opacity: 1;
+    }
+
+    .product-badge {
+        position: absolute;
+        top: 15px;
+        right: 15px;
+        background-color: var(--secondary);
+        color: var(--primary);
+        padding: 0.6rem 1.2rem;
+        border-radius: 0;
+        font-weight: 600;
+        font-size: 0.85em;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        z-index: 2;
+        opacity: 0;
+        transform: translateX(20px);
+        transition: all 0.4s;
+    }
+
+    .product-card:hover .product-badge {
+        opacity: 1;
+        transform: translateX(0);
+    }
+
+    .product-info {
+        padding: 1.5rem;
+        background: white;
+    }
+
+    .product-category {
+        color: #999;
+        font-size: 0.85em;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        margin-bottom: 0.5rem;
+    }
+
+    .product-name {
+        font-size: 1em;
+        font-weight: 600;
+        color: var(--primary);
+        margin-bottom: 0.8rem;
+        letter-spacing: 0.5px;
+        text-transform: uppercase;
+        transition: color 0.3s;
+    }
+
+    .product-card:hover .product-name {
+        color: var(--secondary);
+    }
+
+    .product-price {
+        font-size: 1.2em;
+        color: var(--secondary);
+        font-weight: 700;
+        margin-bottom: 1rem;
+        letter-spacing: 0.5px;
+    }
+
+    .product-price .original {
+        text-decoration: line-through;
+        color: #999;
+        margin-right: 0.5rem;
+        font-size: 0.9em;
+    }
+
+    .wishlist-btn {
+        position: absolute;
+        bottom: 20px;
+        right: 15px;
+        background: white;
+        border: 1px solid var(--border);
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.3s;
+        opacity: 0;
+        transform: scale(0.5);
+        z-index: 2;
+    }
+
+    .product-card:hover .wishlist-btn {
+        opacity: 1;
+        transform: scale(1);
+    }
+
+    .wishlist-btn:hover {
+        background: var(--secondary);
+        border-color: var(--secondary);
+    }
+
+    /* No Products */
+    .no-products {
+        text-align: center;
+        padding: 4rem 2rem;
+        color: #999;
+        grid-column: 1 / -1;
+    }
+
+    .no-products h2 {
+        font-size: 1.8em;
+        color: var(--primary);
+        margin-bottom: 1rem;
+    }
+
+    /* Responsive */
+    @media (max-width: 1200px) {
+        .products-grid {
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1.5rem;
+        }
+    }
+
+    @media (max-width: 768px) {
+        .category-page {
+            grid-template-columns: 1fr;
+        }
+
+        .sidebar {
+            display: none;
+        }
+
+        .category-hero h1 {
+            font-size: 2em;
+        }
+
+        .products-grid {
+            grid-template-columns: 1fr;
+            gap: 1rem;
+        }
+
+        .product-image {
+            height: 280px;
+        }
+
+        .content-header {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 1rem;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Category Hero -->
+<div class="category-hero">
+    <div class="container">
+        <h1><span class="emoji">{{ category_emoji }}</span>{{ category_name }}</h1>
+        <p>Discover our premium collection</p>
+    </div>
+</div>
+
+<div class="container">
+    <div class="category-page">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="filter-title">Filter</div>
+
+            <!-- Search -->
+            <div class="search-box">
+                <form method="get">
+                    <input type="text" name="search" placeholder="Search..." value="{{ search }}">
+                </form>
+            </div>
+
+            <!-- Price Filter -->
+            <div class="filter-section">
+                <h3>Price Range</h3>
+                <form method="get" style="display: flex; flex-direction: column; gap: 0.5rem;">
+                    <div style="display: flex; gap: 0.5rem;">
+                        <input type="number" name="min_price" placeholder="Min" step="0.01" style="flex: 1; padding: 0.6rem; border: 1px solid var(--border); background: var(--light);">
+                        <input type="number" name="max_price" placeholder="Max" step="0.01" style="flex: 1; padding: 0.6rem; border: 1px solid var(--border); background: var(--light);">
+                    </div>
+                </form>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <div class="content-header">
+                <div>
+                    <h2>All Products</h2>
+                    <span class="products-count">{{ products.count }} items</span>
+                </div>
+                <select class="sort-select">
+                    <option>Sort by Price</option>
+                    <option>Price: Low to High</option>
+                    <option>Price: High to Low</option>
+                    <option>Newest</option>
+                </select>
+            </div>
+
+            {% if products %}
+            <div class="products-grid">
+                {% for product in products %}
+                <div class="product-card">
+                    <div class="product-image">
+                        {% if product.badge != 'none' %}
+                            <span class="product-badge">
+                                {% if product.badge == 'new' %}New
+                                {% elif product.badge == 'bestseller' %}Sale
+                                {% elif product.badge == 'sale' %}-{{ product.discount_percentage }}%
+                                {% endif %}
+                            </span>
+                        {% endif %}
+                        👗
+                        <button class="wishlist-btn" onclick="alert('Added to wishlist!');">❤️</button>
+                    </div>
+                    <div class="product-info">
+                        <div class="product-category">{{ product.category.name }}</div>
+                        <a href="{% url 'product_detail' product.id %}" style="text-decoration: none;">
+                            <div class="product-name">{{ product.name }}</div>
+                        </a>
+                        <div class="product-price">
+                            {% if product.discount_percentage > 0 %}
+                                <span class="original">${{ product.price }}</span>${{ product.discounted_price }}
+                            {% else %}
+                                ${{ product.price }}
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <div class="no-products">
+                <h2>No products found</h2>
+                <p>Try adjusting your filters or search terms</p>
+            </div>
+            {% endif %}
+        </main>
+    </div>
+</div>
+{% endblock %}
