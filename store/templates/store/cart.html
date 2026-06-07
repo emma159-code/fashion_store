@@ -215,7 +215,9 @@
             
             {% for item in cart.items.all %}
             <div class="cart-item">
-                <div class="item-image">👗</div>
+                <div class="product-image">
+    <img src="{{ item.product.image.url }}" alt="{{ item.product.name }}">
+</div>
                 <div class="item-details">
                     <h3>{{ item.product.name }}</h3>
                     <div class="item-category">{{ item.product.category.name }}</div>

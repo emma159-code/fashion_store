@@ -1,8 +1,12 @@
 {% extends 'store/base.html' %}
 
+{% load static %}
+
 {% block title %}Home - Fashion Store Rwanda{% endblock %}
 
 {% block extra_css %}
+
+
 <style>
     /* Hero Section */
     .hero {
@@ -12,6 +16,32 @@
         text-align: center;
         border-bottom: 3px solid var(--secondary);
     }
+
+    .hero-content {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 50px;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.hero-text {
+    flex: 1;
+    text-align: left;
+}
+
+.hero-image {
+    flex: 1;
+}
+
+.hero-image img {
+    width: 100%;
+    max-height: 500px;
+    object-fit: cover;
+    border-radius: 15px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+}
 
     .hero h1 {
         font-size: 3.5em;
@@ -98,12 +128,22 @@
         font-size: 3em;
     }
 
-    .category-name {
-        padding: 1rem;
-        text-align: center;
-        font-weight: bold;
-        color: var(--primary);
-    }
+   .category-image {
+    width: 100%;
+    height: 250px;
+    overflow: hidden;
+}
+
+.category-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: 0.4s;
+}
+
+.category-card:hover .category-image img {
+    transform: scale(1.05);
+}
 
     /* Featured Products Section */
     .featured-section {
@@ -132,16 +172,22 @@
     }
 
     .product-image {
-        width: 100%;
-        height: 250px;
-        background: linear-gradient(135deg, var(--primary), var(--secondary));
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 5em;
-        position: relative;
-        overflow: hidden;
-    }
+    width: 100%;
+    height: 300px;
+    position: relative;
+    overflow: hidden;
+}
+
+.product-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: 0.4s;
+}
+
+.product-card:hover .product-image img {
+    transform: scale(1.05);
+}
 
     .product-badge {
         position: absolute;
@@ -239,6 +285,17 @@
     }
 
     @media (max-width: 768px) {
+        .hero-content {
+    flex-direction: column;
+}
+
+.hero-text {
+    text-align: center;
+}
+
+.hero-image {
+    margin-top: 20px;
+}
         .hero h1 {
             font-size: 2em;
         }
@@ -258,11 +315,20 @@
 {% block content %}
 <div class="container">
     <!-- Hero Section -->
-    <div class="hero">
-        <h1>Welcome to Fashion Store Rwanda</h1>
-        <p>Discover Premium Fashion Trends</p>
-        <a href="{% url 'products' %}" class="hero-btn">Shop Now</a>
+   <div class="hero">
+    <div class="hero-content">
+        <div class="hero-text">
+            <h1>Welcome to Fashion Store Rwanda</h1>
+            <p>Discover Premium Fashion Trends</p>
+            <a href="{% url 'products' %}" class="hero-btn">Shop Now</a>
+        </div>
+
+        <div class="hero-image">
+           <img src="{% static 'images/pexels-ron-lach-8400221.jpg' %}"
+     alt="Fashion Collection">
+        </div>
     </div>
+</div>
 
     <!-- Promo Banner -->
     <div class="promo-banner">
@@ -276,19 +342,27 @@
         <h2 class="section-title">Shop by Category</h2>
         <div class="categories-grid">
             <div class="category-card" onclick="window.location.href='{% url 'women' %}'">
-                <div class="category-image">👩‍🦱</div>
+                <div class="category-image">
+    <img src="{% static 'images/women (2).jpg' %}" alt="Women">
+</div>
                 <div class="category-name">Women</div>
             </div>
             <div class="category-card" onclick="window.location.href='{% url 'men' %}'">
-                <div class="category-image">👨‍💼</div>
+                <div class="category-image">
+    <img src="{% static 'images/men.jpg' %}" alt="Men">
+</div>
                 <div class="category-name">Men</div>
             </div>
             <div class="category-card" onclick="window.location.href='{% url 'shoes' %}'">
-                <div class="category-image">👟</div>
+                <div class="category-image">
+    <img src="{% static 'images/shoes.jpg' %}" alt="Shoes">
+</div>
                 <div class="category-name">Shoes</div>
             </div>
             <div class="category-card" onclick="window.location.href='{% url 'accessories' %}'">
-                <div class="category-image">👜</div>
+                <div class="category-image">
+    <img src="{% static 'images/accessories.jpg' %}" alt="Accessories">
+</div>
                 <div class="category-name">Accessories</div>
             </div>
         </div>
@@ -301,13 +375,18 @@
             {% for product in featured_products %}
             <div class="product-card">
                 <div class="product-image">
-                    {% if product.badge != 'none' %}
-                        <span class="product-badge">
-                            {% if product.badge == 'new' %}New{% elif product.badge == 'bestseller' %}Best Seller{% endif %}
-                        </span>
-                    {% endif %}
-                    👗
-                </div>
+    {% if product.badge != 'none' %}
+        <span class="product-badge">
+            {% if product.badge == 'new' %}
+                New
+            {% elif product.badge == 'bestseller' %}
+                Best Seller
+            {% endif %}
+        </span>
+    {% endif %}
+
+    <img src="{{ product.image.url }}" alt="{{ product.name }}">
+</div>
                 <div class="product-info">
                     <div class="product-name">{{ product.name }}</div>
                     <div class="product-category">{{ product.category.name }}</div>

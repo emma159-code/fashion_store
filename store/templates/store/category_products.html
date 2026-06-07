@@ -397,15 +397,8 @@
                 {% for product in products %}
                 <div class="product-card">
                     <div class="product-image">
-                        {% if product.badge != 'none' %}
-                            <span class="product-badge">
-                                {% if product.badge == 'new' %}New
-                                {% elif product.badge == 'bestseller' %}Sale
-                                {% elif product.badge == 'sale' %}-{{ product.discount_percentage }}%
-                                {% endif %}
-                            </span>
-                        {% endif %}
-                        👗
+    <img src="{{ product.image.url }}" alt="{{ product.name }}">
+
                         <button class="wishlist-btn" onclick="alert('Added to wishlist!');">❤️</button>
                     </div>
                     <div class="product-info">

@@ -36,17 +36,30 @@
     }
 
     .main-image {
-        width: 100%;
-        height: 400px;
-        background: linear-gradient(135deg, var(--primary), var(--secondary));
-        border-radius: 8px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 8em;
-        margin-bottom: 1rem;
-        position: relative;
-    }
+    width: 100%;
+    height: 500px;
+    border-radius: 8px;
+    overflow: hidden;
+    position: relative;
+}
+
+.main-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.related-image {
+    width: 100%;
+    height: 200px;
+    overflow: hidden;
+}
+
+.related-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
 
     .product-badge {
         position: absolute;
@@ -336,23 +349,18 @@
             <!-- Product Gallery -->
             <div class="product-gallery">
                 <div class="main-image">
-                    {% if product.badge != 'none' %}
-                        <span class="product-badge">
-                            {% if product.badge == 'new' %}🆕 NEW
-                            {% elif product.badge == 'bestseller' %}⭐ BEST SELLER
-                            {% elif product.badge == 'sale' %}💰 SALE
-                            {% endif %}
-                        </span>
-                    {% endif %}
-                    👗
-                </div>
-                <div class="thumbnail-gallery">
-                    <div class="thumbnail"></div>
-                    <div class="thumbnail"></div>
-                    <div class="thumbnail"></div>
-                    <div class="thumbnail"></div>
-                </div>
-            </div>
+    {% if product.badge != 'none' %}
+        <span class="product-badge">
+            {% if product.badge == 'new' %}🆕 NEW
+            {% elif product.badge == 'bestseller' %}⭐ BEST SELLER
+            {% elif product.badge == 'sale' %}💰 SALE
+            {% endif %}
+        </span>
+    {% endif %}
+
+    <img src="{{ product.image.url }}" alt="{{ product.name }}">
+</div>
+        
 
             <!-- Product Details -->
             <div class="product-details">
@@ -445,7 +453,9 @@
             <div class="related-grid">
                 {% for prod in related_products %}
                 <div class="related-card">
-                    <div class="related-image">👗</div>
+                    <div class="related-image">
+    <img src="{{ prod.image.url }}" alt="{{ prod.name }}">
+</div>
                     <div class="related-info">
                         <div class="related-name">{{ prod.name }}</div>
                         <div class="related-price">${{ prod.discounted_price }}</div>
