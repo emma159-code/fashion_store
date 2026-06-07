@@ -31,8 +31,8 @@ CSRF_TRUSTED_ORIGINS = [
     "https://fashion-store-8xgm.onrender.com",
 ]
 
-CSRF_COOKIE_SECURE = True
-SESSION_COOKIE_SECURE = True
+CSRF_COOKIE_SECURE = False
+SESSION_COOKIE_SECURE = False
 
 
 # Application definition
