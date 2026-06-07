@@ -116,11 +116,9 @@ python manage.py createsuperuser
 python manage.py runserver
 ```
 
-Application URL:
+## Application URL:
 
-```text
-http://127.0.0.1:8000
-```
+https://fashion-store-8xgm.onrender.com
 
 ## Docker Setup
 
