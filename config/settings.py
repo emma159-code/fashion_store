@@ -27,6 +27,10 @@ DEBUG = False
 
 ALLOWED_HOSTS = ['*']
 
+CSRF_TRUSTED_ORIGINS = [
+    "https://fashion-store-8xgm.onrender.com",
+]
+
 
 # Application definition
 
@@ -131,3 +135,5 @@ MESSAGE_TAGS = {
     messages.WARNING: 'warning',
     messages.ERROR: 'error',
 }
+
+STATIC_ROOT = BASE_DIR / 'staticfiles'
