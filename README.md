@@ -186,6 +186,13 @@ The system includes an administrator dashboard displaying:
 ![Shopping cart](screenshots/cart.png)
 ![Shopping cart](screenshots/cart1.png)
 
+## Checkout Page
+
+![Checkout Page](screenshots/checkout-page.png)
+
+## Django Admin Panel
+
+![Django Admin Panel](screenshots/Django-Admin-Panel.png)
 
 ## Admin Dashboard
 
