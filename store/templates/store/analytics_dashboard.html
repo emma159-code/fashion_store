@@ -1,0 +1,58 @@
+{% extends 'store/base.html' %}
+
+{% block title %}Analytics Dashboard{% endblock %}
+
+{% block content %}
+<div class="container">
+
+    <h1 style="margin-bottom:30px;">
+        📊 Analytics Dashboard
+    </h1>
+
+    <div class="dashboard-grid">
+
+        <div class="stat-card">
+            <h2>{{ total_products }}</h2>
+            <p>Total Products</p>
+        </div>
+
+        <div class="stat-card">
+            <h2>{{ total_orders }}</h2>
+            <p>Total Orders</p>
+        </div>
+
+        <div class="stat-card">
+            <h2>{{ total_users }}</h2>
+            <p>Registered Users</p>
+        </div>
+
+        <div class="stat-card">
+            <h2>${{ total_revenue }}</h2>
+            <p>Total Revenue</p>
+        </div>
+
+    </div>
+</div>
+
+<style>
+.dashboard-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
+    gap:20px;
+}
+
+.stat-card{
+    background:white;
+    padding:30px;
+    border-radius:12px;
+    text-align:center;
+    box-shadow:0 4px 10px rgba(0,0,0,.1);
+}
+
+.stat-card h2{
+    color:#d4af37;
+    font-size:2.5rem;
+    margin-bottom:10px;
+}
+</style>
+{% endblock %}

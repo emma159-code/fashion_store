@@ -212,6 +212,30 @@
         opacity: 0.9;
     }
 
+    .admin-panel{
+    margin-top:20px;
+    padding:15px;
+    background:#1a1a1a;
+    color:white;
+    border-radius:8px;
+}
+
+.admin-panel h3{
+    margin-bottom:10px;
+}
+
+.admin-btn{
+    display:block;
+    padding:10px;
+    margin-top:10px;
+    background:var(--secondary);
+    color:var(--primary);
+    text-decoration:none;
+    border-radius:6px;
+    font-weight:bold;
+    text-align:center;
+}
+
     @media (max-width: 768px) {
         .profile-page {
             grid-template-columns: 1fr;
@@ -247,18 +271,63 @@
             <div class="profile-name">{{ user.username }}</div>
             <div class="profile-email">{{ user.email }}</div>
             
-            <ul class="profile-menu">
-                <li class="profile-menu-item active">📊 My Profile</li>
-                <li class="profile-menu-item">❤️ Wishlist</li>
-                <li class="profile-menu-item">⚙️ Settings</li>
-                <li class="profile-menu-item">📞 Help & Support</li>
-            </ul>
+          {% if request.user.is_staff %} 
+          
+          <div class="admin-panel"> <h3>🛠 Administrator Tools</h3> 
+            <a href="{% url 'analytics_dashboard' %}" class="admin-btn"> 📊 Analytics Dashboard </a> 
+            <a href="/admin/" class="admin-btn"> ⚙️ Django Admin </a> </div> 
 
-            <form method="post" action="{% url 'logout' %}" style="display: flex;">
+            {% else %} 
+            
+            <ul class="profile-menu"> 
+                <li class="profile-menu-item active">📊 My Profile</li>
+                 <li class="profile-menu-item">❤️ Wishlist</li>
+                 <li class="profile-menu-item">⚙️ Settings</li> 
+                 <li class="profile-menu-item">📞 Help & Support</li> </ul>
+
+
+            {% endif %}
+
+            <form method="post" action="{% url 'logout' %}">
                 {% csrf_token %}
-                <button type="submit" class="logout-btn">Logout</button>
+                <button type="submit" class="logout-btn">🚪 Logout</button>
             </form>
-        </aside>
+
+            </aside>
+
+            {% if request.user.is_staff %}
+
+<main class="profile-content">
+    <h1 class="content-title">📊 Administrator Dashboard</h1>
+
+    <div class="stats-grid">
+
+        <div class="stat-card">
+            <div class="stat-number">{{ total_products }}</div>
+            <div class="stat-label">Products</div>
+        </div>
+
+        <div class="stat-card">
+            <div class="stat-number">{{ total_orders }}</div>
+            <div class="stat-label">Orders</div>
+        </div>
+
+        <div class="stat-card">
+            <div class="stat-number">{{ total_users }}</div>
+            <div class="stat-label">Users</div>
+        </div>
+
+        <div class="stat-card">
+            <div class="stat-number">${{ total_revenue }}</div>
+            <div class="stat-label">Revenue</div>
+        </div>
+
+    </div>
+</main>
+
+{% endif %}
+
+            {% if not request.user.is_staff %}
 
         <!-- Main Content -->
         <main class="profile-content">
@@ -324,30 +393,31 @@
                             <td>{{ order.created_at|date:"M d, Y" }}</td>
                             <td><strong>${{ order.total_amount }}</strong></td>
                             <td>
-                                <span class="status-badge status-{{ order.status }}">
-                                    {{ order.get_status_display }}
-                                </span>
+                                {% if order.status == "completed" %}
+                                    <span class="status completed">Completed</span>
+                                {% elif order.status == "pending" %}
+                                    <span class="status pending">Pending</span>
+                                {% else %}
+                                    <span class="status cancelled">Cancelled</span>
+                                {% endif %}
                             </td>
                             <td>
-                                <a href="{% url 'order_detail' order.id %}">
-                                    <button class="view-btn">View</button>
-                                </a>
+                                <a href="{% url 'order_detail' order.id %}" class="btn btn-sm btn-outline-primary">View Details</a>
                             </td>
                         </tr>
                         {% endfor %}
                     </tbody>
                 </table>
-                <div style="text-align: center; margin-top: 1.5rem;">
-                    <a href="{% url 'order_history' %}" style="color: var(--secondary); text-decoration: none; font-weight: bold;">View All Orders →</a>
-                </div>
                 {% else %}
-                <div class="empty-state">
-                    <p>You don't have any orders yet.</p>
-                    <a href="{% url 'products' %}" style="color: var(--secondary); text-decoration: none; margin-top: 1rem; display: inline-block;">Start Shopping</a>
-                </div>
+                <p>No recent orders found.</p>
                 {% endif %}
             </div>
+
         </main>
+
+        {% endif %}
+
     </div>
+
 </div>
 {% endblock %}

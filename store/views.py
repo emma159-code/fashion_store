@@ -3,7 +3,7 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.contrib import messages
-from django.db.models import Q
+from django.db.models import Q, Sum
 from django.views.decorators.http import require_POST
 from .models import Category, Product, Cart, CartItem, Order, OrderItem
 
@@ -267,10 +267,25 @@ def user_logout(request):
 def profile(request):
     user = request.user
     orders = Order.objects.filter(user=user)
+
+    total_products = Product.objects.count()
+    total_orders = Order.objects.count()
+    total_users = User.objects.count()
+
+    total_revenue = Order.objects.aggregate(
+        Sum('total_amount')
+    )['total_amount__sum'] or 0
+
     context = {
         'user': user,
         'orders': orders,
+
+        'total_products': total_products,
+        'total_orders': total_orders,
+        'total_users': total_users,
+        'total_revenue': total_revenue,
     }
+
     return render(request, 'store/profile.html', context)
 
 
@@ -369,3 +384,31 @@ def accessories_category(request):
         'search': search,
     }
     return render(request, 'store/category_products.html', context)
+    
+    from django.db.models import Sum
+from django.contrib.auth.models import User
+
+@login_required(login_url='login')
+def analytics_dashboard(request):
+    total_products = Product.objects.count()
+    total_orders = Order.objects.count()
+    total_users = User.objects.count()
+
+    total_revenue = (
+        Order.objects.aggregate(Sum('total_amount'))['total_amount__sum']
+        or 0
+    )
+
+    context = {
+        'total_products': total_products,
+        'total_orders': total_orders,
+        'total_users': total_users,
+        'total_revenue': total_revenue,
+    }
+
+    return render(
+        request,
+        'store/analytics_dashboard.html',
+        context
+    )
+
