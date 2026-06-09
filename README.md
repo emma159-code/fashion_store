@@ -118,7 +118,7 @@ python manage.py runserver
 
 ## Application URL:
 
-https://fashion-store-8xgm.onrender.com
+https://emma159.pythonanywhere.com
 
 ## Docker Setup
 
