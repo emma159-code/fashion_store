@@ -278,6 +278,19 @@
                     <strong>Order Date:</strong>
                     {{ order.created_at|date:"M d, Y - h:i A" }}
                 </div>
+                <div class="detail-box">
+    <h3>💳 Payment Information</h3>
+
+    <div class="detail-row">
+        <strong>Payment Method:</strong>
+        {{ order.payment_method }}
+    </div>
+
+    <div class="detail-row">
+        <strong>Payment Status:</strong>
+        {{ order.payment_status }}
+    </div>
+</div>
                 <div class="detail-row">
                     <strong>Last Updated:</strong>
                     {{ order.updated_at|date:"M d, Y - h:i A" }}
@@ -322,6 +335,10 @@
                 <span>Total:</span>
                 <span>${{ order.total_amount }}</span>
             </div>
+            <div class="summary-row">
+    <span>Payment:</span>
+    <span>{{ order.payment_method }}</span>
+</div>
         </div>
 
         <!-- Action Buttons -->

@@ -147,19 +147,22 @@ def checkout(request):
         phone = request.POST.get('phone')
         address = request.POST.get('address')
         city = request.POST.get('city')
+        payment_method = request.POST.get('payment_method')
         
         # Create order
         total_amount = cart.total_price
         order = Order.objects.create(
-            user=request.user,
-            first_name=first_name,
-            last_name=last_name,
-            email=email,
-            phone=phone,
-            address=address,
-            city=city,
-            total_amount=total_amount,
-        )
+        user=request.user,
+        first_name=first_name,
+        last_name=last_name,
+        email=email,
+        phone=phone,
+        address=address,
+        city=city,
+        payment_method=payment_method,
+        payment_status='Paid',
+        total_amount=total_amount,
+)
         
         # Create order items
         for cart_item in cart.items.all():

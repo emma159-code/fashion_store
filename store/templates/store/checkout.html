@@ -217,6 +217,32 @@
                         <input type="text" id="city" name="city" placeholder="City" required>
                     </div>
                 </div>
+
+                <div class="form-group">
+    <label><strong>Payment Method</strong></label>
+
+    <div>
+        <input type="radio"
+               name="payment_method"
+               value="Mobile Money"
+               required>
+        Mobile Money
+    </div>
+
+    <div>
+        <input type="radio"
+               name="payment_method"
+               value="Stripe">
+        Stripe
+    </div>
+
+    <div>
+        <input type="radio"
+               name="payment_method"
+               value="PayPal">
+        PayPal
+    </div>
+</div>
             </div>
 
             <button type="submit" class="submit-btn">Complete Purchase</button>
